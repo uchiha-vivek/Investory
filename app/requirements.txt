@@ -1,3 +1,11 @@
 langchain
 langchain-ollama
 streamlit
+unstructured[pdf]
+onnx==1.16.1
+qdrant-client
+langchain_community
+langchain_core
+python-dotenv
+langchain-huggingface
+langchain-qdrant
