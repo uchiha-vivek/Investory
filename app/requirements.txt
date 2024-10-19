@@ -9,3 +9,7 @@ langchain_core
 python-dotenv
 langchain-huggingface
 langchain-qdrant
+SQLAlchemy
+llama-index
+PyMySQL
+mysql-connector-python
