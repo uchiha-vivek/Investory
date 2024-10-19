@@ -13,3 +13,4 @@ SQLAlchemy
 llama-index
 PyMySQL
 mysql-connector-python
+groq
