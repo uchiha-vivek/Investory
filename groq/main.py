@@ -8,7 +8,7 @@ import streamlit as st
 load_dotenv()
 
 # Initialize Groq client with API key
-client = Groq(api_key='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')
+client = Groq(api_key='')
 
 def analyze_financial_image(image_bytes):
     # Convert the image to base64
