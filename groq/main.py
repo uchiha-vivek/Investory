@@ -14,8 +14,8 @@ def analyze_financial_image(image_bytes):
     # Convert the image to base64
     base64_image = base64.b64encode(image_bytes).decode('utf-8')
 
-    # Send request to Groq API to identify financial insights
-    response = client.chat.completions.create(
+    # Step 1: Check if the image contains numeric data
+    check_numeric_response = client.chat.completions.create(
         model="llama-3.2-11b-vision-preview",
         messages=[
             {
@@ -23,7 +23,7 @@ def analyze_financial_image(image_bytes):
                 "content": [
                     {
                         "type": "text",
-                        "text": "Identify the financial insights from this image. 'Only the financial insights' comma separated and nothing else."
+                        "text": "Does this image contain numeric data that could be relevant for financial analysis? Respond with 'Yes' or 'No' only."
                     },
                     {
                         "type": "image_url",
@@ -36,12 +36,44 @@ def analyze_financial_image(image_bytes):
         ],
         stream=False,
         temperature=1,
-        max_tokens=1024,
+        max_tokens=50,
         top_p=1,
         stop=None,
     )
 
-    return response.choices[0].message.content
+    contains_numeric = check_numeric_response.choices[0].message.content.strip()
+
+    if contains_numeric.lower() == "yes":
+        # Step 2: If numeric data is found, extract financial insights
+        response = client.chat.completions.create(
+            model="llama-3.2-11b-vision-preview",
+            messages=[
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "Identify the financial insights from this image. 'Only the financial insights' comma separated and nothing else."
+                        },
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": f"data:image/jpeg;base64,{base64_image}"
+                            }
+                        }
+                    ]
+                }
+            ],
+            stream=False,
+            temperature=1,
+            max_tokens=1024,
+            top_p=1,
+            stop=None,
+        )
+        return response.choices[0].message.content
+    else:
+        # Return a message indicating the image is irrelevant for financial analysis
+        return "The image does not contain relevant numeric data for financial analysis."
 
 def suggest_financial_insights(financial_data):
     # Send the financial data to Llama3.2 to get further financial insights
